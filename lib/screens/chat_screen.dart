@@ -1,5 +1,8 @@
 import 'package:chatgpt/constants/constants.dart';
+import 'package:chatgpt/services/api_services.dart';
 import 'package:chatgpt/services/asset_manager.dart';
+import 'package:chatgpt/services/services.dart';
+import 'package:chatgpt/widgets/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -41,7 +44,9 @@ class _ChatScreenState extends State<ChatScreen> {
         title: const Text('ChatGPT'),
         actions: [
           IconButton(
-              onPressed: () {},
+              onPressed: () async {
+                await Services.showModalBtmSheet(context: context);
+              },
               icon: Icon(
                 Icons.more_vert_rounded,
                 color: Colors.white,
@@ -84,7 +89,13 @@ class _ChatScreenState extends State<ChatScreen> {
                             hintStyle: TextStyle(color: Colors.grey)),
                       )),
                       IconButton(
-                          onPressed: () {},
+                          onPressed: () async {
+                            try {
+                              await ApiServices.getModels();
+                            } catch (error) {
+                              print('error $error');
+                            }
+                          },
                           icon: const Icon(
                             Icons.send,
                             color: Colors.white,
