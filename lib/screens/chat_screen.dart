@@ -1,10 +1,14 @@
+import 'dart:developer';
+
 import 'package:chatgpt/constants/constants.dart';
+import 'package:chatgpt/providers/model_provider.dart';
 import 'package:chatgpt/services/api_services.dart';
 import 'package:chatgpt/services/asset_manager.dart';
 import 'package:chatgpt/services/services.dart';
 import 'package:chatgpt/widgets/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:provider/provider.dart';
 
 import '../widgets/chat_widget.dart';
 
@@ -16,7 +20,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final bool _isTyping = true;
+  bool _isTyping = false;
 
   late TextEditingController textEditingController;
 
@@ -34,6 +38,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final modelsProvider = Provider.of<ModelProvider>(context);
     return Scaffold(
       appBar: AppBar(
         elevation: 2,
@@ -72,39 +77,47 @@ class _ChatScreenState extends State<ChatScreen> {
                 color: Colors.white,
                 size: 18,
               ),
-              const SizedBox(height: 15),
-              Material(
-                color: cardColor,
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: TextField(
-                        style: TextStyle(color: Colors.white),
-                        controller: textEditingController,
-                        onSubmitted: (value) {},
-                        decoration: const InputDecoration.collapsed(
-                            hintText: 'How can I help you?',
-                            hintStyle: TextStyle(color: Colors.grey)),
-                      )),
-                      IconButton(
-                          onPressed: () async {
-                            try {
-                              await ApiServices.getModels();
-                            } catch (error) {
-                              print('error $error');
-                            }
-                          },
-                          icon: const Icon(
-                            Icons.send,
-                            color: Colors.white,
-                          ))
-                    ],
-                  ),
+            ],
+            const SizedBox(height: 15),
+            Material(
+              color: cardColor,
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: TextField(
+                      style: TextStyle(color: Colors.white),
+                      controller: textEditingController,
+                      onSubmitted: (value) {},
+                      decoration: const InputDecoration.collapsed(
+                          hintText: 'How can I help you?',
+                          hintStyle: TextStyle(color: Colors.grey)),
+                    )),
+                    IconButton(
+                        onPressed: () async {
+                          try {
+                            setState(() {
+                              _isTyping = true;
+                            });
+                            log("Request Sent");
+                            await ApiServices.sendMsgs(
+                                message: textEditingController.text,
+                                modelId: modelsProvider.getCurrentModel);
+                          } catch (error) {
+                            log('error $error');
+                          } finally {
+                            setState(() => {_isTyping = false});
+                          }
+                        },
+                        icon: const Icon(
+                          Icons.send,
+                          color: Colors.white,
+                        ))
+                  ],
                 ),
-              )
-            ]
+              ),
+            )
           ],
         ),
       ),
