@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
+import 'package:chatgpt/models/chat_model.dart';
 import 'package:chatgpt/models/models_model.dart';
 import 'package:http/http.dart' as http;
 import '../constants/api_const.dart';
@@ -32,7 +33,7 @@ class ApiServices {
     }
   }
 
-  static Future<void> sendMsgs(
+  static Future<List<ChatModel>> sendMsgs(
       {required String message, required String modelId}) async {
     try {
       var response = await http.post(
@@ -56,9 +57,18 @@ class ApiServices {
         // print("jsonResponse['error'] ${jsonResponse['error']["message"]}");
         throw HttpException(jsonResponse['error']["message"]);
       }
+      List<ChatModel> chatlist = [];
       if (jsonResponse["choice"].length > 0) {
-        log("jsonResponse[choice]text ${jsonResponse["choice"][0]["text"]}");
+        // log("jsonResponse[choice]text ${jsonResponse["choice"][0]["text"]}");
+        chatlist = List.generate(
+          jsonResponse["choice"].length,
+          (index) => ChatModel(
+            msg: jsonResponse["choice"][index]["text"],
+            chatIndex: 1,
+          ),
+        );
       }
+      return chatlist;
     } catch (error) {
       log("error $error");
       rethrow;

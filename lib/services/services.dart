@@ -1,7 +1,5 @@
 import 'package:chatgpt/widgets/drop_down_btn.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-
 import '../constants/constants.dart';
 import '../widgets/text_widget.dart';
 

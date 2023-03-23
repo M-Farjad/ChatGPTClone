@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 class AssetsManager {
   static String imagePath = "assets/images";
   static String userImage = "$imagePath/person.png";

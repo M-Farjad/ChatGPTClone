@@ -5,7 +5,6 @@ import 'package:chatgpt/providers/model_provider.dart';
 import 'package:chatgpt/services/api_services.dart';
 import 'package:chatgpt/services/asset_manager.dart';
 import 'package:chatgpt/services/services.dart';
-import 'package:chatgpt/widgets/text_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:provider/provider.dart';
@@ -102,8 +101,9 @@ class _ChatScreenState extends State<ChatScreen> {
                             });
                             log("Request Sent");
                             await ApiServices.sendMsgs(
-                                message: textEditingController.text,
-                                modelId: modelsProvider.getCurrentModel);
+                              message: textEditingController.text,
+                              modelId: modelsProvider.getCurrentModel,
+                            );
                           } catch (error) {
                             log('error $error');
                           } finally {
